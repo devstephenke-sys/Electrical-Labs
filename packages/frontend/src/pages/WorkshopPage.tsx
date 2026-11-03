@@ -1,5 +1,6 @@
 import WiringCanvas from '../components/WiringCanvas';
 import SafetyPanel from '../components/SafetyPanel';
+import Multimeter from '../components/Multimeter';
 
 export default function WorkshopPage() {
   return (
@@ -39,8 +40,8 @@ export default function WorkshopPage() {
           <WiringCanvas />
         </div>
         
-        {/* Right Panel - Instructions & Info */}
-        <div className="w-80 bg-gray-800 border-l border-gray-700 p-4">
+        {/* Right Panel - Instructions, Info & Tools */}
+        <div className="w-80 bg-gray-800 border-l border-gray-700 p-4 overflow-y-auto">
           <h2 className="text-lg font-semibold mb-4">Scenario Info</h2>
           <div className="space-y-4">
             <div>
@@ -55,10 +56,14 @@ export default function WorkshopPage() {
                 <li>• Add components using buttons in workspace</li>
                 <li>• Drag components to position them</li>
                 <li>• Click terminals to wire connections</li>
+                <li>• Use multimeter to verify readings</li>
                 <li>• Click Simulate to run circuit analysis</li>
-                <li>• View voltage, current, and power values</li>
               </ul>
             </div>
+          </div>
+
+          <div className="mt-6">
+            <Multimeter />
           </div>
         </div>
       </div>
