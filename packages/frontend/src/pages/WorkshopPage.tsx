@@ -1,4 +1,5 @@
 import WiringCanvas from '../components/WiringCanvas';
+import SafetyPanel from '../components/SafetyPanel';
 
 export default function WorkshopPage() {
   return (
@@ -8,9 +9,11 @@ export default function WorkshopPage() {
       </div>
       
       <div className="flex h-[calc(100vh-4rem)]">
-        {/* Left Panel - Component Palette */}
-        <div className="w-64 bg-gray-800 border-r border-gray-700 p-4">
-          <h2 className="text-lg font-semibold mb-4">Components</h2>
+        {/* Left Panel - Component Palette & Safety */}
+        <div className="w-64 bg-gray-800 border-r border-gray-700 p-4 overflow-y-auto">
+          <SafetyPanel />
+          
+          <h2 className="text-lg font-semibold mb-4 mt-6">Components</h2>
           <div className="space-y-2">
             <div className="bg-gray-700 p-3 rounded cursor-pointer hover:bg-gray-600">
               <div className="text-sm">Voltage Source</div>
@@ -48,8 +51,10 @@ export default function WorkshopPage() {
             <div>
               <h3 className="font-medium text-sm text-gray-400">Instructions</h3>
               <ul className="text-sm mt-1 space-y-1 text-gray-300">
+                <li>• Complete safety sequence first</li>
                 <li>• Add components using buttons in workspace</li>
                 <li>• Drag components to position them</li>
+                <li>• Click terminals to wire connections</li>
                 <li>• Click Simulate to run circuit analysis</li>
                 <li>• View voltage, current, and power values</li>
               </ul>
