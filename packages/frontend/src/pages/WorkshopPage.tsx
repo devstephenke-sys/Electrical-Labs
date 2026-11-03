@@ -1,3 +1,5 @@
+import WiringCanvas from '../components/WiringCanvas';
+
 export default function WorkshopPage() {
   return (
     <div className="min-h-screen bg-gray-900 text-white">
@@ -12,30 +14,26 @@ export default function WorkshopPage() {
           <div className="space-y-2">
             <div className="bg-gray-700 p-3 rounded cursor-pointer hover:bg-gray-600">
               <div className="text-sm">Voltage Source</div>
+              <div className="text-xs text-gray-400">240V DC</div>
             </div>
             <div className="bg-gray-700 p-3 rounded cursor-pointer hover:bg-gray-600">
               <div className="text-sm">Resistor</div>
+              <div className="text-xs text-gray-400">100Ω</div>
             </div>
             <div className="bg-gray-700 p-3 rounded cursor-pointer hover:bg-gray-600">
               <div className="text-sm">Switch</div>
+              <div className="text-xs text-gray-400">SPST</div>
             </div>
             <div className="bg-gray-700 p-3 rounded cursor-pointer hover:bg-gray-600">
               <div className="text-sm">Light Bulb</div>
+              <div className="text-xs text-gray-400">60W</div>
             </div>
           </div>
         </div>
         
         {/* Center Panel - Wiring Workspace */}
         <div className="flex-1 bg-gray-900 relative">
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-gray-500">
-              <svg className="w-24 h-24 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
-              </svg>
-              <p>Wiring Workspace</p>
-              <p className="text-sm mt-2">Drag components here to begin</p>
-            </div>
-          </div>
+          <WiringCanvas />
         </div>
         
         {/* Right Panel - Instructions & Info */}
@@ -44,30 +42,19 @@ export default function WorkshopPage() {
           <div className="space-y-4">
             <div>
               <h3 className="font-medium text-sm text-gray-400">Job Brief</h3>
-              <p className="text-sm mt-1">Select a scenario to begin</p>
+              <p className="text-sm mt-1">One-Way Lighting Installation</p>
+              <p className="text-xs text-gray-500 mt-1">Install a single lighting point controlled by a one-way switch</p>
             </div>
             <div>
-              <h3 className="font-medium text-sm text-gray-400">Schematic</h3>
-              <div className="mt-1 bg-gray-700 h-32 rounded flex items-center justify-center">
-                <span className="text-gray-500 text-sm">No schematic loaded</span>
-              </div>
+              <h3 className="font-medium text-sm text-gray-400">Instructions</h3>
+              <ul className="text-sm mt-1 space-y-1 text-gray-300">
+                <li>• Add components using buttons in workspace</li>
+                <li>• Drag components to position them</li>
+                <li>• Click Simulate to run circuit analysis</li>
+                <li>• View voltage, current, and power values</li>
+              </ul>
             </div>
           </div>
-        </div>
-      </div>
-      
-      {/* Bottom Panel - Tools & Status */}
-      <div className="h-16 bg-gray-800 border-t border-gray-700 flex items-center px-4">
-        <div className="flex space-x-4">
-          <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded text-sm">
-            Simulate
-          </button>
-          <button className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-sm">
-            Reset
-          </button>
-        </div>
-        <div className="ml-auto text-sm text-gray-400">
-          Circuit Status: <span className="text-yellow-400">Not Connected</span>
         </div>
       </div>
     </div>
