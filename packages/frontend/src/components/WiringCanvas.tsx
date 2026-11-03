@@ -1,55 +1,105 @@
 import { useRef, useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { createComponent } from '../utils/componentFactory';
+import { Wire, ConductorType } from '@electrical-lab/shared';
 
 export default function WiringCanvas() {
   const svgRef = useRef<SVGSVGElement>(null);
   const [dragging, setDragging] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
+  const [wiring, setWiring] = useState<{ fromComponent: string; fromTerminal: string } | null>(null);
   
-  const { circuit, addComponent, selectComponent, selectedComponent, startSimulation, isSimulating } = useCircuitStore();
+  const { circuit, addComponent, selectComponent, selectedComponent, startSimulation, isSimulating, addWire } = useCircuitStore();
 
   const handleAddComponent = (type: string) => {
     const component = createComponent(type, 200, 200);
     addComponent(component);
   };
 
-  const handleMouseDown = (e: React.MouseEvent, componentId: string) => {
-    const component = circuit.components.find((c) => c.id === componentId);
-    if (!component) return;
+  const handleMouseDown = (e: React.MouseEvent, componentId: string, terminalId?: string) => {
+    if (terminalId) {
+      // Start wiring from this terminal
+      setWiring({ fromComponent: componentId, fromTerminal: terminalId });
+    } else {
+      // Drag component
+      const component = circuit.components.find((c) => c.id === componentId);
+      if (!component) return;
 
-    setDragging(componentId);
-    selectComponent(component);
-    
-    const svg = svgRef.current;
-    if (!svg) return;
+      setDragging(componentId);
+      selectComponent(component);
+      
+      const svg = svgRef.current;
+      if (!svg) return;
 
-    const rect = svg.getBoundingClientRect();
-    setDragOffset({
-      x: e.clientX - rect.left - component.position.x,
-      y: e.clientY - rect.top - component.position.y,
-    });
+      const rect = svg.getBoundingClientRect();
+      setDragOffset({
+        x: e.clientX - rect.left - component.position.x,
+        y: e.clientY - rect.top - component.position.y,
+      });
+    }
   };
 
   const handleMouseMove = (e: React.MouseEvent) => {
-    if (!dragging) return;
+    if (dragging) {
+      const svg = svgRef.current;
+      if (!svg) return;
 
-    const svg = svgRef.current;
-    if (!svg) return;
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left - dragOffset.x;
+      const y = e.clientY - rect.top - dragOffset.y;
 
-    const rect = svg.getBoundingClientRect();
-    const x = e.clientX - rect.left - dragOffset.x;
-    const y = e.clientY - rect.top - dragOffset.y;
-
-    useCircuitStore.getState().updateComponent(dragging, { position: { x, y } });
+      useCircuitStore.getState().updateComponent(dragging, { position: { x, y } });
+    }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = (e: React.MouseEvent) => {
+    if (wiring) {
+      // Check if we released on a terminal
+      const svg = svgRef.current;
+      if (!svg) {
+        setWiring(null);
+        return;
+      }
+
+      const rect = svg.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+
+      // Find terminal under cursor
+      for (const component of circuit.components) {
+        for (const terminal of component.terminals) {
+          const termX = component.position.x + (terminal.position.x - component.position.x);
+          const termY = component.position.y + (terminal.position.y - component.position.y);
+          const dist = Math.sqrt((x - termX) ** 2 + (y - termY) ** 2);
+          
+          if (dist < 10 && component.id !== wiring.fromComponent) {
+            // Create wire
+            const wire: Wire = {
+              id: `wire_${Date.now()}`,
+              fromComponentId: wiring.fromComponent,
+              fromTerminalId: wiring.fromTerminal,
+              toComponentId: component.id,
+              toTerminalId: terminal.id,
+              type: 'live' as ConductorType,
+              color: '#9ca3af',
+            };
+            addWire(wire);
+            break;
+          }
+        }
+      }
+    }
+    
     setDragging(null);
+    setWiring(null);
   };
 
   const handleSimulate = () => {
     startSimulation();
+  };
+
+  const handleReset = () => {
+    useCircuitStore.getState().resetCircuit();
   };
 
   return (
@@ -110,6 +160,11 @@ export default function WiringCanvas() {
                 fill="#fbbf24"
                 stroke="#000"
                 strokeWidth={1}
+                onMouseDown={(e) => {
+                  e.stopPropagation();
+                  handleMouseDown(e, component.id, terminal.id);
+                }}
+                style={{ cursor: 'crosshair' }}
               />
             ))}
 
@@ -154,6 +209,20 @@ export default function WiringCanvas() {
             />
           );
         })}
+
+        {/* Active wire being drawn */}
+        {wiring && isSimulating === false && (
+          <line
+            x1={circuit.components.find((c) => c.id === wiring.fromComponent)?.position.x || 0}
+            y1={circuit.components.find((c) => c.id === wiring.fromComponent)?.position.y || 0}
+            x2={0}
+            y2={0}
+            stroke="#3b82f6"
+            strokeWidth={2}
+            strokeDasharray="5,5"
+            style={{ pointerEvents: 'none' }}
+          />
+        )}
       </svg>
 
       {/* Component palette overlay */}
@@ -193,7 +262,7 @@ export default function WiringCanvas() {
           {isSimulating ? 'Simulating...' : 'Simulate'}
         </button>
         <button
-          onClick={() => useCircuitStore.getState().resetCircuit()}
+          onClick={handleReset}
           className="bg-gray-600 hover:bg-gray-700 px-4 py-2 rounded text-sm"
         >
           Reset
@@ -210,6 +279,13 @@ export default function WiringCanvas() {
             <div>Current: {selectedComponent.state.current.toFixed(3)} A</div>
             <div>Power: {selectedComponent.state.power.toFixed(2)} W</div>
           </div>
+        </div>
+      )}
+
+      {/* Wiring hint */}
+      {wiring && (
+        <div className="absolute bottom-20 left-4 bg-blue-600 p-2 rounded text-sm">
+          Click on a terminal to complete the wire
         </div>
       )}
     </div>
