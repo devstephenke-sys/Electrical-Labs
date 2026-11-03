@@ -1,31 +1,25 @@
 /**
  * Circuit simulation types
+ * Expanded with component categories, terminal roles, and enhanced properties
  */
 
-export type ComponentType =
-  | 'resistor'
-  | 'capacitor'
-  | 'inductor'
-  | 'dc_voltage_source'
-  | 'ac_voltage_source'
-  | 'current_source'
-  | 'switch_spst'
-  | 'switch_spdt'
-  | 'light_bulb'
-  | 'led'
-  | 'ground'
-  | 'contactor'
-  | 'relay'
-  | 'motor'
-  | 'breaker';
+import { ComponentCategory, ComponentType, ComponentRatings, ComponentVisual, StandardsCompliance } from './component';
+import { Terminal, TerminalRole, ConductorType } from './terminal';
 
 export interface Component {
   id: string;
   type: ComponentType;
+  category: ComponentCategory;     // NEW
+  name: string;                    // NEW: display name
+  description?: string;            // NEW: functional description
   position: { x: number; y: number };
+  rotation?: number;               // NEW: degrees
   parameters: ComponentParameters;
   terminals: Terminal[];
   state: ComponentState;
+  ratings?: ComponentRatings;      // NEW
+  visual?: ComponentVisual;       // NEW
+  standards?: StandardsCompliance; // NEW
 }
 
 export interface ComponentParameters {
@@ -46,13 +40,6 @@ export interface ComponentState {
   isOpen: boolean; // For switches, breakers
 }
 
-export interface Terminal {
-  id: string;
-  nodeId: string | null;
-  position: { x: number; y: number };
-  type: 'input' | 'output' | 'neutral' | 'ground';
-}
-
 export interface Wire {
   id: string;
   fromComponentId: string;
@@ -61,6 +48,7 @@ export interface Wire {
   toTerminalId: string;
   color?: string;
   gauge?: number;
+  type?: ConductorType;           // NEW: conductor type
 }
 
 export interface Circuit {

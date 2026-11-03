@@ -3,9 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "description": "Virtual electrical workshop simulation platform",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "dev": "concurrently \"pnpm --filter frontend dev\" \"pnpm --filter backend dev\"",
     "build": "pnpm --filter frontend build && pnpm --filter backend build",
