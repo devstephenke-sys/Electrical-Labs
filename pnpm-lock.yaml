@@ -84,6 +84,12 @@ importers:
 
   packages/frontend:
     dependencies:
+      '@electrical-lab/shared':
+        specifier: workspace:*
+        version: link:../shared
+      '@electrical-lab/simulator':
+        specifier: workspace:*
+        version: link:../simulator
       react:
         specifier: ^18.2.0
         version: 18.3.1
