@@ -1,7 +1,7 @@
 import { useRef, useState } from 'react';
 import { useCircuitStore } from '../store/circuitStore';
 import { createComponent } from '../utils/componentFactory';
-import { Wire, ConductorType } from '@electrical-lab/shared';
+import { Wire, ConductorType, TerminalRole } from '@electrical-lab/shared';
 
 const CONDUCTOR_COLORS = {
   live: '#b45309',      // Brown/amber for live
@@ -86,18 +86,18 @@ export default function WiringCanvas() {
             const fromTerm = fromComp?.terminals.find(t => t.id === wiring.fromTerminal);
             const toTerm = terminal;
             
-            let conductorType: ConductorType = 'live';
+            let conductorType: ConductorType = ConductorType.LIVE;
             let wireColor = CONDUCTOR_COLORS.live;
             
             // Determine conductor type based on terminal roles
-            if (fromTerm?.role === 'neutral' || toTerm.role === 'neutral') {
-              conductorType = 'neutral';
+            if (fromTerm?.role === TerminalRole.NEUTRAL || toTerm.role === TerminalRole.NEUTRAL) {
+              conductorType = ConductorType.NEUTRAL;
               wireColor = CONDUCTOR_COLORS.neutral;
-            } else if (fromTerm?.role === 'protective_earth' || toTerm.role === 'protective_earth') {
-              conductorType = 'protective_earth';
+            } else if (fromTerm?.role === TerminalRole.PROTECTIVE_EARTH || toTerm.role === TerminalRole.PROTECTIVE_EARTH) {
+              conductorType = ConductorType.PROTECTIVE_EARTH;
               wireColor = CONDUCTOR_COLORS.protective_earth;
-            } else if (fromTerm?.role === 'common' || toTerm.role === 'common') {
-              conductorType = 'control';
+            } else if (fromTerm?.role === TerminalRole.COMMON || toTerm.role === TerminalRole.COMMON) {
+              conductorType = ConductorType.CONTROL;
               wireColor = CONDUCTOR_COLORS.control;
             }
             
@@ -235,12 +235,12 @@ export default function WiringCanvas() {
             </g>
 
             {/* Terminals with proper labeling */}
-            {component.terminals.map((terminal, index) => {
+            {component.terminals.map((terminal) => {
               const termX = terminal.position.x - component.position.x;
               const termY = terminal.position.y - component.position.y;
-              const terminalColor = terminal.role === 'live' ? '#b45309' :
-                                   terminal.role === 'neutral' ? '#2563eb' :
-                                   terminal.role === 'protective_earth' ? '#16a34a' : '#64748b';
+              const terminalColor = terminal.role === TerminalRole.LIVE ? '#b45309' :
+                                   terminal.role === TerminalRole.NEUTRAL ? '#2563eb' :
+                                   terminal.role === TerminalRole.PROTECTIVE_EARTH ? '#16a34a' : '#64748b';
               
               return (
                 <g key={terminal.id}>

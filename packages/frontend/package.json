@@ -17,7 +17,8 @@
     "zustand": "^4.4.7",
     "react-router-dom": "^6.20.1",
     "@electrical-lab/shared": "workspace:*",
-    "@electrical-lab/simulator": "workspace:*"
+    "@electrical-lab/simulator": "workspace:*",
+    "@electrical-lab/scenarios": "workspace:*"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",

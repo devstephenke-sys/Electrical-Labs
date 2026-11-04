@@ -5,6 +5,7 @@ import { useSafetyStore } from '../store/safetyStore';
 import WiringCanvas from '../components/WiringCanvas';
 import SafetyPanel from '../components/SafetyPanel';
 import Multimeter from '../components/Multimeter';
+import { oneWayLightingScenario } from '@electrical-lab/scenarios';
 
 export default function WorkshopPage() {
   const navigate = useNavigate();
@@ -12,7 +13,7 @@ export default function WorkshopPage() {
   const { resetSafety } = useSafetyStore();
 
   useEffect(() => {
-    initializeFromScenario();
+    initializeFromScenario(oneWayLightingScenario);
     resetSafety();
   }, [initializeFromScenario, resetSafety]);
 

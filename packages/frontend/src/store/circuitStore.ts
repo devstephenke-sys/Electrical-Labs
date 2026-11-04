@@ -1,6 +1,7 @@
 import { create } from 'zustand';
-import { Circuit, Component, Wire } from '@electrical-lab/shared';
+import { Circuit, Component, Wire, Scenario, ComponentConfig } from '@electrical-lab/shared';
 import { NodalSolver, Solution } from '@electrical-lab/simulator';
+import { createComponent } from '../utils/componentFactory';
 
 interface CircuitStore {
   circuit: Circuit;
@@ -19,6 +20,7 @@ interface CircuitStore {
   startSimulation: () => void;
   stopSimulation: () => void;
   resetCircuit: () => void;
+  initializeFromScenario: (scenario: Scenario) => void;
 }
 
 const initialCircuit: Circuit = {
@@ -98,6 +100,25 @@ export const useCircuitStore = create<CircuitStore>((set) => ({
   resetCircuit: () =>
     set({
       circuit: initialCircuit,
+      selectedComponent: null,
+      selectedWire: null,
+      isSimulating: false,
+      simulationResults: null,
+    }),
+
+  initializeFromScenario: (scenario) =>
+    set({
+      circuit: {
+        components: scenario.circuitConfig.components.map((compConfig: ComponentConfig) => {
+          const component = createComponent(
+            compConfig.componentId,
+            compConfig.position?.x || 200,
+            compConfig.position?.y || 200
+          );
+          return component;
+        }),
+        wires: [],
+      },
       selectedComponent: null,
       selectedWire: null,
       isSimulating: false,
