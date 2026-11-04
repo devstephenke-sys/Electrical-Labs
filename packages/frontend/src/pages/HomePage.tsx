@@ -1,4 +1,7 @@
+import { useNavigate } from 'react-router-dom';
+
 export default function HomePage() {
+  const navigate = useNavigate();
   return (
     <div className="min-h-screen bg-gray-900 text-white">
       <div className="container mx-auto px-4 py-8">
@@ -9,7 +12,10 @@ export default function HomePage() {
           <div className="bg-gray-800 p-6 rounded-lg">
             <h2 className="text-2xl font-semibold mb-4">Virtual Workshop</h2>
             <p className="mb-4">Practice electrical installation in a safe virtual environment</p>
-            <button className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+            <button 
+              className="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded"
+              onClick={() => navigate('/workshop')}
+            >
               Enter Workshop
             </button>
           </div>
