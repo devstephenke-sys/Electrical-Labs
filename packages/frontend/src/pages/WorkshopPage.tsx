@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCircuitStore } from '../store/circuitStore';
 import { useSafetyStore } from '../store/safetyStore';
+import { useAssessmentStore } from '../store/assessmentStore';
 import WiringCanvas from '../components/WiringCanvas';
 import SafetyPanel from '../components/SafetyPanel';
 import Multimeter from '../components/Multimeter';
@@ -11,11 +12,16 @@ export default function WorkshopPage() {
   const navigate = useNavigate();
   const { initializeFromScenario } = useCircuitStore();
   const { resetSafety } = useSafetyStore();
+  const { runAssessment, assessmentResult } = useAssessmentStore();
 
   useEffect(() => {
     initializeFromScenario(oneWayLightingScenario);
     resetSafety();
   }, [initializeFromScenario, resetSafety]);
+
+  const handleCompleteAssessment = () => {
+    runAssessment();
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white">
@@ -192,6 +198,62 @@ export default function WorkshopPage() {
                 </div>
               </div>
             </div>
+
+            {/* Assessment Results */}
+            {assessmentResult && (
+              <div className="bg-slate-800/80 backdrop-blur-sm rounded-xl border-2 border-green-600 overflow-hidden">
+                <div className="bg-green-900/50 px-4 py-3 border-b border-green-600">
+                  <h2 className="text-sm font-bold text-green-400 uppercase tracking-wider flex items-center gap-2">
+                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+                    </svg>
+                    Assessment Complete
+                  </h2>
+                </div>
+                <div className="p-4 space-y-3">
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400">Overall Score</span>
+                    <span className="text-xs font-bold text-green-400">{assessmentResult.overallScore}%</span>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <span className="text-xs text-slate-400">Status</span>
+                    <span className={`text-xs font-bold px-2 py-0.5 rounded ${
+                      assessmentResult.passed 
+                        ? 'bg-green-900/50 text-green-400 border border-green-700' 
+                        : 'bg-red-900/50 text-red-400 border border-red-700'
+                    }`}>
+                      {assessmentResult.passed ? 'PASS' : 'FAIL'}
+                    </span>
+                  </div>
+                  <div className="border-t border-slate-700 pt-3 mt-3">
+                    <div className="text-xs text-slate-500 mb-2">Breakdown</div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-400">Safety</span>
+                      <span className="text-xs font-bold text-green-400">{assessmentResult.safetyScore}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-400">Accuracy</span>
+                      <span className="text-xs font-bold text-blue-400">{assessmentResult.accuracyScore}%</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-xs text-slate-400">Efficiency</span>
+                      <span className="text-xs font-bold text-amber-400">{assessmentResult.efficiencyScore}%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Complete Assessment Button */}
+            <button
+              onClick={handleCompleteAssessment}
+              className="w-full bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 px-4 py-3 rounded-lg text-sm font-bold transition-all shadow-lg shadow-green-500/20 flex items-center justify-center gap-2"
+            >
+              <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/>
+              </svg>
+              Complete Assessment
+            </button>
           </div>
         </div>
       </div>

@@ -132,7 +132,23 @@ export const oneWayLightingScenario: Scenario = {
       breakingCapacity: 6,
       characteristics: 'B',
     },
-    components: [],
+    components: [
+      {
+        componentId: 'voltage_source',
+        position: { x: 100, y: 200 },
+        initialConnections: [],
+      },
+      {
+        componentId: 'switch',
+        position: { x: 300, y: 200 },
+        initialConnections: [],
+      },
+      {
+        componentId: 'light_bulb',
+        position: { x: 500, y: 200 },
+        initialConnections: [],
+      },
+    ],
     expectedTopology: {
       nodes: [],
       edges: [],
