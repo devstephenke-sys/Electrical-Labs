@@ -6,18 +6,17 @@ import { useAssessmentStore } from '../store/assessmentStore';
 import WiringCanvas from '../components/WiringCanvas';
 import SafetyPanel from '../components/SafetyPanel';
 import Multimeter from '../components/Multimeter';
-import { oneWayLightingScenario } from '@electrical-lab/scenarios';
 
 export default function WorkshopPage() {
   const navigate = useNavigate();
-  const { initializeFromScenario } = useCircuitStore();
+  const { resetCircuit } = useCircuitStore();
   const { resetSafety } = useSafetyStore();
   const { runAssessment, assessmentResult } = useAssessmentStore();
 
   useEffect(() => {
-    initializeFromScenario(oneWayLightingScenario);
+    resetCircuit();
     resetSafety();
-  }, [initializeFromScenario, resetSafety]);
+  }, [resetCircuit, resetSafety]);
 
   const handleCompleteAssessment = () => {
     runAssessment();
